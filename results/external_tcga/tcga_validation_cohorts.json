@@ -1,0 +1,16 @@
+{
+  "ER+": {
+    "train_n": 996,
+    "train_events": 408,
+    "test_n": 679,
+    "test_events": 66,
+    "test_median_followup_months": 25.28191472
+  },
+  "All": {
+    "train_n": 1295,
+    "train_events": 545,
+    "test_n": 902,
+    "test_events": 100,
+    "test_median_followup_months": 25.594240065
+  }
+}

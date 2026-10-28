@@ -1,0 +1,108 @@
+feature,source,type,genes_in_set,genes_used,description
+HM_ADIPOGENESIS,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_ADIPOGENESIS genes
+HM_ALLOGRAFT_REJECTION,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_ALLOGRAFT_REJECTION genes
+HM_ANDROGEN_RESPONSE,MSigDB Hallmark,expression score,101.0,101.0,Mean expression z-score of 101 HALLMARK_ANDROGEN_RESPONSE genes
+HM_ANGIOGENESIS,MSigDB Hallmark,expression score,36.0,36.0,Mean expression z-score of 36 HALLMARK_ANGIOGENESIS genes
+HM_APICAL_JUNCTION,MSigDB Hallmark,expression score,200.0,197.0,Mean expression z-score of 197 HALLMARK_APICAL_JUNCTION genes
+HM_APICAL_SURFACE,MSigDB Hallmark,expression score,44.0,44.0,Mean expression z-score of 44 HALLMARK_APICAL_SURFACE genes
+HM_APOPTOSIS,MSigDB Hallmark,expression score,161.0,160.0,Mean expression z-score of 160 HALLMARK_APOPTOSIS genes
+HM_BILE_ACID_METABOLISM,MSigDB Hallmark,expression score,112.0,111.0,Mean expression z-score of 111 HALLMARK_BILE_ACID_METABOLISM genes
+HM_CHOLESTEROL_HOMEOSTASIS,MSigDB Hallmark,expression score,74.0,74.0,Mean expression z-score of 74 HALLMARK_CHOLESTEROL_HOMEOSTASIS genes
+HM_COAGULATION,MSigDB Hallmark,expression score,138.0,137.0,Mean expression z-score of 137 HALLMARK_COAGULATION genes
+HM_COMPLEMENT,MSigDB Hallmark,expression score,200.0,195.0,Mean expression z-score of 195 HALLMARK_COMPLEMENT genes
+HM_DNA_REPAIR,MSigDB Hallmark,expression score,150.0,148.0,Mean expression z-score of 148 HALLMARK_DNA_REPAIR genes
+HM_E2F_TARGETS,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_E2F_TARGETS genes
+HM_EPITHELIAL_MESENCHYMAL_TRANSITION,MSigDB Hallmark,expression score,200.0,200.0,Mean expression z-score of 200 HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION genes
+HM_ESTROGEN_RESPONSE_EARLY,MSigDB Hallmark,expression score,200.0,194.0,Mean expression z-score of 194 HALLMARK_ESTROGEN_RESPONSE_EARLY genes
+HM_ESTROGEN_RESPONSE_LATE,MSigDB Hallmark,expression score,200.0,195.0,Mean expression z-score of 195 HALLMARK_ESTROGEN_RESPONSE_LATE genes
+HM_FATTY_ACID_METABOLISM,MSigDB Hallmark,expression score,158.0,156.0,Mean expression z-score of 156 HALLMARK_FATTY_ACID_METABOLISM genes
+HM_G2M_CHECKPOINT,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_G2M_CHECKPOINT genes
+HM_GLYCOLYSIS,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_GLYCOLYSIS genes
+HM_HEDGEHOG_SIGNALING,MSigDB Hallmark,expression score,36.0,36.0,Mean expression z-score of 36 HALLMARK_HEDGEHOG_SIGNALING genes
+HM_HEME_METABOLISM,MSigDB Hallmark,expression score,200.0,197.0,Mean expression z-score of 197 HALLMARK_HEME_METABOLISM genes
+HM_HYPOXIA,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_HYPOXIA genes
+HM_IL2_STAT5_SIGNALING,MSigDB Hallmark,expression score,199.0,198.0,Mean expression z-score of 198 HALLMARK_IL2_STAT5_SIGNALING genes
+HM_IL6_JAK_STAT3_SIGNALING,MSigDB Hallmark,expression score,87.0,87.0,Mean expression z-score of 87 HALLMARK_IL6_JAK_STAT3_SIGNALING genes
+HM_INFLAMMATORY_RESPONSE,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_INFLAMMATORY_RESPONSE genes
+HM_INTERFERON_ALPHA_RESPONSE,MSigDB Hallmark,expression score,97.0,97.0,Mean expression z-score of 97 HALLMARK_INTERFERON_ALPHA_RESPONSE genes
+HM_INTERFERON_GAMMA_RESPONSE,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_INTERFERON_GAMMA_RESPONSE genes
+HM_KRAS_SIGNALING_DN,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_KRAS_SIGNALING_DN genes
+HM_KRAS_SIGNALING_UP,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_KRAS_SIGNALING_UP genes
+HM_MITOTIC_SPINDLE,MSigDB Hallmark,expression score,199.0,196.0,Mean expression z-score of 196 HALLMARK_MITOTIC_SPINDLE genes
+HM_MTORC1_SIGNALING,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_MTORC1_SIGNALING genes
+HM_MYC_TARGETS_V1,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_MYC_TARGETS_V1 genes
+HM_MYC_TARGETS_V2,MSigDB Hallmark,expression score,58.0,55.0,Mean expression z-score of 55 HALLMARK_MYC_TARGETS_V2 genes
+HM_MYOGENESIS,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_MYOGENESIS genes
+HM_NOTCH_SIGNALING,MSigDB Hallmark,expression score,32.0,32.0,Mean expression z-score of 32 HALLMARK_NOTCH_SIGNALING genes
+HM_OXIDATIVE_PHOSPHORYLATION,MSigDB Hallmark,expression score,200.0,194.0,Mean expression z-score of 194 HALLMARK_OXIDATIVE_PHOSPHORYLATION genes
+HM_P53_PATHWAY,MSigDB Hallmark,expression score,200.0,197.0,Mean expression z-score of 197 HALLMARK_P53_PATHWAY genes
+HM_PANCREAS_BETA_CELLS,MSigDB Hallmark,expression score,40.0,40.0,Mean expression z-score of 40 HALLMARK_PANCREAS_BETA_CELLS genes
+HM_PEROXISOME,MSigDB Hallmark,expression score,104.0,104.0,Mean expression z-score of 104 HALLMARK_PEROXISOME genes
+HM_PI3K_AKT_MTOR_SIGNALING,MSigDB Hallmark,expression score,105.0,104.0,Mean expression z-score of 104 HALLMARK_PI3K_AKT_MTOR_SIGNALING genes
+HM_PROTEIN_SECRETION,MSigDB Hallmark,expression score,96.0,96.0,Mean expression z-score of 96 HALLMARK_PROTEIN_SECRETION genes
+HM_REACTIVE_OXYGEN_SPECIES_PATHWAY,MSigDB Hallmark,expression score,49.0,48.0,Mean expression z-score of 48 HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY genes
+HM_SPERMATOGENESIS,MSigDB Hallmark,expression score,135.0,134.0,Mean expression z-score of 134 HALLMARK_SPERMATOGENESIS genes
+HM_TGF_BETA_SIGNALING,MSigDB Hallmark,expression score,54.0,53.0,Mean expression z-score of 53 HALLMARK_TGF_BETA_SIGNALING genes
+HM_TNFA_SIGNALING_VIA_NFKB,MSigDB Hallmark,expression score,200.0,199.0,Mean expression z-score of 199 HALLMARK_TNFA_SIGNALING_VIA_NFKB genes
+HM_UNFOLDED_PROTEIN_RESPONSE,MSigDB Hallmark,expression score,113.0,112.0,Mean expression z-score of 112 HALLMARK_UNFOLDED_PROTEIN_RESPONSE genes
+HM_UV_RESPONSE_DN,MSigDB Hallmark,expression score,144.0,143.0,Mean expression z-score of 143 HALLMARK_UV_RESPONSE_DN genes
+HM_UV_RESPONSE_UP,MSigDB Hallmark,expression score,158.0,157.0,Mean expression z-score of 157 HALLMARK_UV_RESPONSE_UP genes
+HM_WNT_BETA_CATENIN_SIGNALING,MSigDB Hallmark,expression score,42.0,42.0,Mean expression z-score of 42 HALLMARK_WNT_BETA_CATENIN_SIGNALING genes
+HM_XENOBIOTIC_METABOLISM,MSigDB Hallmark,expression score,200.0,198.0,Mean expression z-score of 198 HALLMARK_XENOBIOTIC_METABOLISM genes
+DM_proliferation_AURKA,Desmedt et al. 2008,expression score,229.0,229.0,Weighted proliferation module score (prototype AURKA)
+DM_apoptosis_CASP3,Desmedt et al. 2008,expression score,10.0,10.0,Weighted apoptosis module score (prototype CASP3)
+DM_HER2_signaling_ERBB2,Desmedt et al. 2008,expression score,28.0,28.0,Weighted HER2 signaling module score (prototype ERBB2)
+DM_ER_signaling_ESR1,Desmedt et al. 2008,expression score,469.0,463.0,Weighted ER signaling module score (prototype ESR1)
+DM_tumor_invasion_PLAU,Desmedt et al. 2008,expression score,68.0,67.0,Weighted tumor invasion module score (prototype PLAU)
+DM_immune_response_STAT1,Desmedt et al. 2008,expression score,95.0,95.0,Weighted immune response module score (prototype STAT1)
+DM_angiogenesis_VEGF,Desmedt et al. 2008,expression score,14.0,14.0,Weighted angiogenesis module score (prototype VEGF)
+CNA_CCND1_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of CCND1 (value +2)
+CNA_PAK1_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of PAK1 (value +2)
+CNA_FGFR1_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of FGFR1 (value +2)
+CNA_ZNF703_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of ZNF703 (value +2)
+CNA_MYC_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of MYC (value +2)
+CNA_RPS6KB1_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of RPS6KB1 (value +2)
+CNA_PPM1D_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of PPM1D (value +2)
+CNA_ERBB2_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of ERBB2 (value +2)
+CNA_MDM2_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of MDM2 (value +2)
+CNA_TSG_deep_del_any,cBioPortal CNA (GISTIC),copy number,,,"1 if deep deletion (-2) of any of CDKN2A, PTEN, RB1, MAP2K4"
+CNA_fraction_altered,cBioPortal CNA (GISTIC),copy number,,,Fraction of genes with any copy-number change (genome instability)
+MUT_PIK3CA,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) PIK3CA mutation
+MUT_TP53,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) TP53 mutation
+MUT_GATA3,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) GATA3 mutation
+MUT_KMT2C,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) KMT2C mutation
+MUT_MAP3K1,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) MAP3K1 mutation
+MUT_CDH1,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) CDH1 mutation
+MUT_AKT1,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) AKT1 mutation
+MUT_PTEN,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) PTEN mutation
+MUT_nonsilent_count_log,cBioPortal mutations (173-gene panel),mutation,,,log(1 + number of protein-changing mutations in the panel)
+METH_mean,METABRIC RRBS promoter methylation,methylation,,,
+METH_sd,METABRIC RRBS promoter methylation,methylation,,,
+METH_hyper_frac,METABRIC RRBS promoter methylation,methylation,,,
+METH_intermediate_frac,METABRIC RRBS promoter methylation,methylation,,,
+METH_DM_proliferation,METABRIC RRBS + Desmedt 2008,methylation,,164.0,
+METH_DM_apoptosis,METABRIC RRBS + Desmedt 2008,methylation,,7.0,
+METH_DM_HER2_signaling,METABRIC RRBS + Desmedt 2008,methylation,,14.0,
+METH_DM_ER_signaling,METABRIC RRBS + Desmedt 2008,methylation,,309.0,
+METH_DM_tumor_invasion,METABRIC RRBS + Desmedt 2008,methylation,,46.0,
+METH_DM_immune_response,METABRIC RRBS + Desmedt 2008,methylation,,30.0,
+METH_DM_angiogenesis,METABRIC RRBS + Desmedt 2008,methylation,,10.0,
+METH_ESR1,METABRIC RRBS promoter methylation,methylation,,,
+METH_PGR,METABRIC RRBS promoter methylation,methylation,,,
+METH_GATA3,METABRIC RRBS promoter methylation,methylation,,,
+METH_FOXA1,METABRIC RRBS promoter methylation,methylation,,,
+METH_CDH1,METABRIC RRBS promoter methylation,methylation,,,
+METH_BRCA1,METABRIC RRBS promoter methylation,methylation,,,
+METH_RASSF1,METABRIC RRBS promoter methylation,methylation,,,
+METH_CDKN2A,METABRIC RRBS promoter methylation,methylation,,,
+METH_PTEN,METABRIC RRBS promoter methylation,methylation,,,
+IMM_B_lineage,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,Mean expression z-score of 9 B lineage marker genes
+IMM_CD8_T_cells,MCP-counter (Becht 2016),immune/stromal score,1.0,1.0,Mean expression z-score of 1 CD8 T cells marker genes
+IMM_Cytotoxic_lymphocytes,MCP-counter (Becht 2016),immune/stromal score,7.0,6.0,Mean expression z-score of 6 Cytotoxic lymphocytes marker genes
+IMM_Endothelial_cells,MCP-counter (Becht 2016),immune/stromal score,33.0,32.0,Mean expression z-score of 32 Endothelial cells marker genes
+IMM_Fibroblasts,MCP-counter (Becht 2016),immune/stromal score,8.0,8.0,Mean expression z-score of 8 Fibroblasts marker genes
+IMM_Monocytic_lineage,MCP-counter (Becht 2016),immune/stromal score,7.0,7.0,Mean expression z-score of 7 Monocytic lineage marker genes
+IMM_Myeloid_dendritic_cells,MCP-counter (Becht 2016),immune/stromal score,6.0,5.0,Mean expression z-score of 5 Myeloid dendritic cells marker genes
+IMM_NK_cells,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,Mean expression z-score of 9 NK cells marker genes
+IMM_Neutrophils,MCP-counter (Becht 2016),immune/stromal score,15.0,15.0,Mean expression z-score of 15 Neutrophils marker genes
+IMM_T_cells,MCP-counter (Becht 2016),immune/stromal score,16.0,15.0,Mean expression z-score of 15 T cells marker genes

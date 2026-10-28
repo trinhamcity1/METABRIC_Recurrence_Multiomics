@@ -1,0 +1,19 @@
+# Raw cBioPortal download (~1.3 GB) - download it yourself, see README
+data/brca_metabric/
+data/brca_tcga_pan_can_atlas_2018/
+
+# Third-party gene-set files - download them yourself, see README
+data/gene_sets/h.all.*.gmt
+data/gene_sets/mod1.rda
+data/gene_sets/genes.txt
+
+# Python / OS clutter
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+venv/
+
+# Intermediate checkpoints (re-created when scripts run)
+results/**/checkpoints/
+results/**/ck_*/

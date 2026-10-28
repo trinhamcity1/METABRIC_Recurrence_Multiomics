@@ -1,0 +1,7 @@
+analysis,feature_set,metric,mean,sd,n,events
+"A. All patients, Cox (time-to-recurrence)",CLIN,C-index,0.6563906511166396,0.04683952980631208,1112,462
+"A. All patients, Cox (time-to-recurrence)",CLIN+MOL,C-index,0.6590098220222013,0.04741759292677798,1112,462
+"B. ER+ only, Cox (time-to-recurrence)",CLIN,C-index,0.6497986459881098,0.036066457503512686,863,350
+"B. ER+ only, Cox (time-to-recurrence)",CLIN+MOL,C-index,0.6591030509974557,0.043945711377650604,863,350
+"C. Late recurrence (>5y), LR",CLIN,AUC,0.5859147869674186,0.05270802420628002,745,175
+"C. Late recurrence (>5y), LR",CLIN+MOL,AUC,0.5958395989974937,0.04840098018450746,745,175
