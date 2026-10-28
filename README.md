@@ -1,7 +1,7 @@
 # METABRIC Recurrence: Clinical + Multi-Omic Prediction
 
 Follow-up to *Multi-Target Machine Learning for Breast Cancer Prognosis and Molecular Classification Using METABRIC* (EGETC 2026, Best Paper Award).
-Target venue: AMIA 2027 Annual Symposium (deadline expected early March 2027), followed by a journal paper.
+Target venue: ACET Annual Conference 2026, followed by a journal paper.
 
 **Question.** Recurrence was the hardest target in the EGETC paper (AUC 0.666 with clinical features). Do genomic, epigenomic, and immune features improve recurrence prediction, and for which patients?
 
@@ -9,7 +9,7 @@ Target venue: AMIA 2027 Annual Symposium (deadline expected early March 2027), f
 
 The full write-up of methods, the reasoning behind each choice, all results, and limitations is in **`docs/Phase2_Methods_and_Findings.md`** (also as .docx). The Phase 1 pilot is in `docs/Phase1_Pilot_Report.md`.
 
-## Key findings so far
+## Key findings:
 
 All comparisons use the same patients and the same seeded folds; anything learned from data (scaling, PCA, feature selection, AutoML tuning) is fitted inside the training fold only.
 
