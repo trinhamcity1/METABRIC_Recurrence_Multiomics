@@ -1,0 +1,8 @@
+step,n
+TCGA-BRCA patients,1084
+Male (excluded),12
+"Female, M1 (excluded)",20
+"Female, not M1, neoadjuvant = Yes (excluded)",5
+Retained,1047
+"  of retained: M stage not M0 or M1 (unknown/MX/missing; retained, not confirmed M0)",158
+  of retained: neoadjuvant status not 'No' (unknown/missing; retained),1

@@ -1,0 +1,7 @@
+{
+ "metabric_samples": 1295,
+ "tcga_samples": 1082,
+ "shared_genes": 17072,
+ "overlap_A1000_B1000": 350,
+ "union_genes_scored": 1650
+}

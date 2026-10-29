@@ -11,7 +11,7 @@ three domain-motivated reframings with the same CLIN vs CLIN+MOL comparison:
      Harrell C-index (handles censoring properly).
   B. ER-positive patients only, time-to-event (where IntClust risk groups
      were defined).
-  C. Late distant-type recurrence: among patients still recurrence-free and
+  C. Late recurrence (any recorded relapse; local and distant are not distinguished): among patients still recurrence-free and
      followed at 5 years, did they recur afterwards? (logistic regression AUC)
 
 All comparisons use the same patients and seeded folds; corrected paired t-test.

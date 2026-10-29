@@ -1,164 +1,86 @@
-# METABRIC Recurrence: Clinical + Multi-Omic Prediction
+# Genomic Features for Recurrence Risk Stratification in METABRIC With an Exploratory TCGA Assessment
 
+<<<<<<< Updated upstream
 Follow-up to *Multi-Target Machine Learning for Breast Cancer Prognosis and Molecular Classification Using METABRIC* (EGETC 2026, Best Paper Award).
 Target venue: ACET Annual Conference 2026, followed by a journal paper.
+=======
+Code, processed data and results for the ACET 2026 manuscript of the same title (Nham, Arteaga-Arteaga, Bravo-Ortiz, Tabares-Soto, Hernandez, Arenas, Guillen-Rondon). Follow-up to *Multi-Target Machine Learning for Breast Cancer Prognosis and Molecular Classification Using METABRIC* (EGETC 2026).
+>>>>>>> Stashed changes
 
-**Question.** Recurrence was the hardest target in the EGETC paper (AUC 0.666 with clinical features). Do genomic, epigenomic, and immune features improve recurrence prediction, and for which patients?
+**Question.** Do gene-level molecular summaries (expression gene-set scores, copy-number and mutation drivers; methylation and immune marker summaries as secondary blocks) improve recurrence discrimination in METABRIC, and is a similar signal seen in TCGA-BRCA?
 
-## Documentation
+## Main results (from the files in `results/`)
 
-The full write-up of methods, the reasoning behind each choice, all results, and limitations is in **`docs/Phase2_Methods_and_Findings.md`** (also as .docx). The Phase 1 pilot is in `docs/Phase1_Pilot_Report.md`.
+All internal comparisons use the same patients and seeded splits. Every step that learns from data inside this pipeline (scaling, PCA, SHAP selection, hyperparameter tuning) is fitted inside training folds, and inside inner folds during tuning. **Exception:** the expression input is the cBioPortal mRNA z-score file, which the data provider normalized against a reference population from the cohort before this pipeline; that step is not re-estimated inside folds, so the evaluation uses previously cohort-normalized data and is not strictly inductive.
 
+<<<<<<< Updated upstream
 ## Key findings:
+=======
+Baselines: **BASE** = the EGETC legacy baseline (clinical, treatment and mutation-count variables) with constant / duplicated columns removed (21 columns in all patients, 19 in ER+); **CLIN** = BASE without the two mutation-count summaries (strictly clinical and treatment). **GEN** = all 77 genomic features; **PC+DRV** = 9 principal components of the 57 gene-set scores + 20 drivers.
+>>>>>>> Stashed changes
 
-All comparisons use the same patients and the same seeded folds; anything learned from data (scaling, PCA, feature selection, AutoML tuning) is fitted inside the training fold only.
+| ER+ patients (n = 996, 408 events), tuned models, 50 splits | Baseline | + genomic | Gain (95% CI) | Holm p |
+|---|---|---|---|---|
+| Random survival forest, BASE+PC+DRV vs BASE | 0.629 | 0.662 | +0.033 (+0.015 to +0.051) | 0.002 |
+| Random survival forest, CLIN+PC+DRV vs CLIN | 0.620 | 0.662 | +0.043 (+0.024 to +0.061) | <0.001 |
+| Ridge Cox, BASE+GEN vs BASE | 0.632 | 0.658 | +0.026 (−0.002 to +0.054) | 0.28 |
 
-| Analysis (penalised Cox, 5x5 repeated CV, C-index) | Clinical only | + Genomic | Change | Splits improved | Holm p |
-|---|---|---|---|---|---|
-| All patients (n = 1,295, 545 recurred) | 0.649 | 0.653 | +0.004 | 15/25 | 1.00 |
-| **ER+ patients (n = 996, 408 recurred)** | **0.627** | **0.659** | **+0.032** | **23/25** | 0.15 |
-| Late recurrence > 5 y, ER+ (n = 703) | 0.596 | 0.571 | -0.025 | 10/25 | 1.00 |
+These are **internal, exploratory** model-development results (the reduced representation, the tuned models, the CLIN comparator and CORE4 were added after an earlier analysis round). Holm adjustment covers each declared comparison family, not every adaptive decision. Uno's IPCW C-index at 120 months gives similar internal increments (`results/phase2/ipcw_internal.csv`).
 
-**Tuned survival models (10 repeats x 5 folds = 50 splits, tuning inside training folds only):**
+- All patients combined: gains +0.004 to +0.017, none significant after Holm adjustment.
+- Five-year landmark (ER+, 188 events): the evaluated genomic feature sets did not improve discrimination (−0.025, 95% CI −0.078 to +0.027).
+- Methylation / immune summaries: no improvement over BASE+GEN was demonstrated (paired contrasts in `multiomics_*_tests.csv`).
+- **Exploratory TCGA assessment** (refitted harmonized model with 6 predictors, within-cohort molecular standardization, ESR1-inferred ER; 679 ER+ patients, 66 PFI events; median reverse-KM follow-up 28.4 months): Cox gain +0.014 (−0.036 to +0.064); full RSF −0.029; all gain intervals include zero; Uno's C at 36 months gives −0.009 for Cox. This is not external validation of a frozen predictor.
+- SHAP results describe the binary LightGBM classifier in all patients (most stable molecular attribution: fraction of assayed genes with a copy-number call), not the ER+ survival models.
 
-| ER+ patients (n = 996) | Clinical only | + All genomic (99 features) | + Reduced genomic (9 PCs + 20 drivers) |
-|---|---|---|---|
-| Penalised Cox, tuned penalty | 0.632 | 0.657 (+0.025, 46/50 splits, Holm p = 0.14) | 0.645 (+0.012) |
-| **Random survival forest, tuned** | 0.633 | 0.656 (+0.023, 43/50, Holm p = 0.14) | **0.661 (+0.028, 45/50, Holm p = 0.016)** |
+Binary Recurred / Not Recurred classification (logistic regression, LightGBM) ignores censoring and is reported only as descriptive classification of observed status. AutoML (FLAML, MLJAR) results from the earlier specification are archived in `results/legacy_v1/` and are not used in the manuscript.
 
-All patients: gains of +0.009 to +0.012, not significant. Results: `results/phase2/tuned_survival_summary.csv`, `tuned_survival_tests.csv`.
-
-**External validation (train on METABRIC, test on TCGA-BRCA; 6 harmonized clinical features):**
-
-| TCGA ER+ (679 patients, 66 events) | Clinical | + Genomic | Gain (95% bootstrap CI) |
-|---|---|---|---|
-| Penalised Cox | 0.608 | 0.623 | +0.014 (−0.036 to +0.064) |
-| Random survival forest | 0.604 | 0.554 | −0.050 (−0.128 to +0.029) |
-
-The ER+ gain keeps its direction in TCGA for Cox but is smaller and not significant (short follow-up, few events); the random survival forest does not transfer. Results: `results/external_tcga/`.
-
-- The genomic gain is concentrated in **ER+ patients** and is consistent across Cox, random survival forests, FLAML (+0.021 AUC) and MLJAR (+0.027 AUC); it reaches statistical significance with the tuned random survival forest on the reduced feature set.
-- No gain for all patients combined, or for late recurrence (too few events for ~100 features).
-- **Methylation** (+0.003) and **immune cell scores** (-0.001) add nothing beyond the genomic features; immune scores are highly correlated with existing gene-set scores (r = 0.83-0.93).
-- The 57 gene-set scores carry about 9 independent signals (PCA: 9 PCs = 80% variance).
-- Most stable genomic predictor (SHAP, all 25 splits): **fraction of genome altered** (genome instability), followed by proliferation gene sets.
-
-Main results files: `results/phase2/er_late_summary.csv`, `er_late_tests.csv`, `compare_summary.csv`, `compare_tests.csv`, `shap_stability_CLIN_ALL.csv`, `automl_summary.csv`, `multiomics_*_summary.csv`, `fig_pca_redundancy.png`.
-
-## Folder structure
+## Reproducing the manuscript
 
 ```
-METABRIC_Recurrence_Multiomics/
-├── README.md, requirements.txt, run_all.sh, .gitignore
-├── data/
-│   ├── Breast_Cancer_METABRIC.csv            main clinical table (2,509 patients, 34 columns)
-│   ├── brca_metabric/                        raw cBioPortal METABRIC study (1.3 GB, not in GitHub - see below)
-│   ├── brca_tcga_pan_can_atlas_2018/         raw cBioPortal TCGA-BRCA study (1.5 GB, not in GitHub)
-│   ├── gene_sets/                            Hallmark .gmt, Desmedt modules, MCP-counter markers
-│   └── processed/
-│       ├── metabric_recurrence_multiomics.csv   FINAL DATASET: 2,509 patients x 141 columns
-│       ├── tcga_brca_features.csv               TCGA-BRCA external validation features
-│       └── feature_dictionary.csv               what every engineered column means
-├── src/                                      all scripts (run in the order of run_all.sh)
-├── results/
-│   ├── pilot/                                Phase 1: molecular labels already in the clinical table
-│   ├── phase2/                               Phase 2: gene-level features, PCA, SHAP, AutoML, multi-omics, tuned survival
-│   └── external_tcga/                        external validation on TCGA-BRCA
-└── docs/
-    ├── Phase2_Methods_and_Findings (.md/.docx)   full methods, rationale, results, interpretation, limitations
-    └── Phase1_Pilot_Report (.md/.docx)           Phase 1 pilot: molecular labels from the clinical table
+# Python 3.10/3.11 recommended
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-lock.txt      # exact versions used (Python 3.10.12, Linux)
+#   or: pip install -r requirements.txt   # broader ranges, e.g. Python 3.11 on macOS (LightGBM needs: brew install libomp)
+bash run_all.sh                            # ~40-60 min on 4 cores; logs in results/logs/
+RUN_EXTRA=1 bash run_all.sh                # also AutoML + Phase 1 pilot (not in the manuscript)
 ```
 
-### The final dataset: `metabric_recurrence_multiomics.csv`
+`run_all.sh` rebuilds features from raw cBioPortal data if present, otherwise starts from `data/processed/`. Each step stops the pipeline on failure; the checkpointed tuned-survival step has a retry limit and a progress check, and checkpoints carry a specification hash so stale results are never mixed in. `docs/TABLE_FIGURE_MANIFEST.md` maps every manuscript table and figure to its script and output file.
 
-One row per patient, joined on `Patient ID` (MB-xxxx). Columns:
+## Data
 
-| Block | Prefix | Count | Source |
+| Block | Prefix | Count | Definition |
 |---|---|---|---|
-| Original clinical table | (as in METABRIC) | 34 | cBioPortal clinical data |
-| Hallmark gene-set scores | `HM_` | 50 | MSigDB Hallmark (Liberzon 2015), mean expression z-score |
-| Desmedt breast modules | `DM_` | 7 | Desmedt et al. 2008, weighted module scores |
-| Copy-number drivers | `CNA_` | 11 | 9 driver amplifications, tumour-suppressor deep deletion, fraction of genome altered |
-| Mutation drivers | `MUT_` | 9 | 8 driver genes (non-silent mutations) + mutation burden |
-| Methylation | `METH_` | 20 | RRBS promoter methylation: global level, within-tumour instability, module and key genes |
-| Immune / stromal cells | `IMM_` | 10 | MCP-counter (Becht 2016) cell-population scores |
+| Clinical table | (as in METABRIC) | 34 | cBioPortal clinical data |
+| Hallmark gene-set scores | `HM_` | 50 | mean of member-gene expression z-scores (MSigDB human Hallmark, release 2026.1, `h.all.v2026.1.Hs.symbols.gmt`) |
+| Desmedt modules | `DM_` | 7 | weighted average of member-gene z-scores, published coefficients (genefu `mod1`) |
+| Copy-number drivers | `CNA_` | 11 | 9 driver amplifications (GISTIC +2), any deep deletion of 4 tumour suppressors, and `CNA_frac_genes_altered` = fraction of **assayed genes** with a non-zero GISTIC call (missing calls excluded; not length-weighted, not "fraction of genome altered") |
+| Mutation drivers | `MUT_` | 9 | non-silent mutation in 8 driver genes + log count of non-silent variants (173-gene panel in METABRIC, exome in TCGA: a variant count, not TMB per Mb) |
+| Methylation | `METH_` | 20 (14 modelled) | RRBS promoter methylation summaries; the 14 modelled features (≤1% missing among profiled tumours) are a frozen list |
+| Immune / stromal | `IMM_` | 10 | **MCP-counter marker-based z-score summaries** (mean of marker-gene z-scores); not the original MCP-counter abundance estimator, not cell proportions |
 
-Not every patient has every data type (expression 1,980; copy number 1,985; mutations 2,433; methylation 1,418); missing blocks are left empty. The modelling cohort is the 1,295 patients with a recorded recurrence outcome and complete clinical + genomic data.
+Cohort flow (2,509 → 1,295 modelling patients → 945 with methylation) and the included-vs-excluded comparison are in `results/cohort/`. TCGA exclusions (unknown M stage and neoadjuvant status counted separately) and a patient-to-sample map are in `results/cohort/tcga_exclusions.csv` and `tcga_sample_map.csv`.
 
-## Getting the data
-
-1. **METABRIC study (cBioPortal):** download `brca_metabric.tar.gz` from https://www.cbioportal.org/datasets ("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)") and unzip it into `data/brca_metabric/`.
-2. **MSigDB Hallmark gene sets:** free login at https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp, download "H: hallmark gene sets", Gene Symbols (`h.all.v2026.1.Hs.symbols.gmt`), into `data/gene_sets/`. If your version number differs, update the file name in `src/build_features.py`.
-3. **Desmedt modules:** `mod1.rda` from https://github.com/bhklab/genefu (data folder) into `data/gene_sets/`.
-4. **MCP-counter markers:** `genes.txt` from https://github.com/ebecht/MCPcounter (Signatures folder) into `data/gene_sets/`.
-
-5. **TCGA-BRCA (external validation):** download "Breast Invasive Carcinoma (TCGA, PanCancer Atlas)" (`brca_tcga_pan_can_atlas_2018.tar.gz`) from https://www.cbioportal.org/datasets and unzip into `data/brca_tcga_pan_can_atlas_2018/`.
-
-`data/Breast_Cancer_METABRIC.csv` is the same clinical table used in the EGETC paper.
-
-## How to run (Mac)
-
-```bash
-# 1. Open Terminal and go to the project folder
-cd ~/Downloads/Paper1/METABRIC_Recurrence_Multiomics
-
-# 2. Create and activate a virtual environment with Python 3.11
-#    (Python 3.13/3.14 lack prebuilt packages for some libraries; pip then fails
-#    trying to compile SciPy). Install 3.11 once with: brew install python@3.11
-python3.11 -m venv .venv
-source .venv/bin/activate
-
-# 3. Install packages (LightGBM on Mac needs OpenMP: brew install libomp)
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# 4. Run everything except the slow AutoML steps (~10-20 minutes)
-QUICK=1 bash run_all.sh
-
-# 5. Or run the full pipeline including AutoML (~1-1.5 hours)
-bash run_all.sh
-```
-
-**Two ways to run, chosen automatically by `run_all.sh`:**
-
-- **From the processed data (no download needed).** The shared project includes the processed datasets (`data/processed/metabric_recurrence_multiomics.csv`, `data/processed/tcga_brca_features.csv`). If the raw cBioPortal folders are not present, `run_all.sh` skips the feature-building steps and runs every model, test, and figure from these files. This reproduces all reported results.
-- **From scratch (raw data downloaded).** If `data/brca_metabric/` (and optionally `data/brca_tcga_pan_can_atlas_2018/`) are present, `run_all.sh` first rebuilds all feature tables from the raw files, then runs the models. Rebuilding gives the same processed datasets.
-
-To run one step only: `cd src` then e.g. `python model_er_late.py`. Scripts skip work that is already saved in `results/**/ck_*` checkpoint folders; delete those folders to recompute from scratch.
-
-## Methods summary
-
-- **Endpoints:** binary recurrence (relapse-free status) and time to recurrence (relapse-free months, censoring handled by Cox models); ER+ subgroup; landmark analysis for recurrence after 5 years.
-- **Models:** penalised Cox (scikit-survival), L2 logistic regression, LightGBM, FLAML and MLJAR AutoML. Cox penalty and RSF leaf size tuned inside training folds; other models use fixed settings or short AutoML budgets.
-- **Validation:** 5-fold x 5-repeat stratified CV (Cox / fixed models), 5-fold CV (AutoML); corrected repeated k-fold t-test (Bouckaert & Frank 2004) or Nadeau-Bengio corrected t-test, Holm adjustment.
-- **Interpretability:** TreeSHAP on LightGBM in every test fold, with top-15 stability; SHAP-based selection also tested inside training folds.
+**Raw data** (not in GitHub): METABRIC (`brca_metabric`) and TCGA-BRCA PanCancer Atlas (`brca_tcga_pan_can_atlas_2018`) from https://www.cbioportal.org/datasets, unzipped into `data/`; Hallmark `.gmt` from MSigDB; `mod1.rda` from https://github.com/bhklab/genefu; MCP-counter `genes.txt` from https://github.com/ebecht/MCPcounter. The analysed METABRIC release was downloaded in May 2025; its expression file is `data_mrna_illumina_microarray_zscores_ref_diploid_samples.txt`.
 
 ## Script index (`src/`)
 
-| Script | What it does |
+| Script | Purpose |
 |---|---|
-| `extract_desmedt_modules.py` | Converts Desmedt modules from R format to CSV |
-| `build_features.py` | Builds gene-set scores, copy-number and mutation features; creates the final dataset |
-| `build_methylation_features.py` | Adds methylation features |
-| `build_immune_features.py` | Adds MCP-counter immune / stromal scores |
-| `pca_expression_scores.py` | PCA and redundancy clusters of the 57 gene-set scores |
-| `model_compare_shap.py` | Feature-set comparison (LR, LightGBM, Cox) + SHAP stability |
-| `model_er_late.py` | ER+ and late-recurrence Cox analyses |
-| `model_multiomics.py` | Tests methylation and immune blocks |
-| `model_tuned_survival.py` | Tuned Cox and random survival forest, reduced feature set, 10x5 CV |
-| `build_tcga_features.py` | Builds TCGA-BRCA features with identical definitions + harmonized clinical features |
-| `validate_tcga.py` | Trains on METABRIC, tests on TCGA, bootstrap confidence intervals |
-| `run_automl_phase2.py` | MLJAR + FLAML AutoML on the feature sets |
-| `run_recurrence_molecular.py`, `run_survival_framing.py` | Phase 1 pilot (molecular labels from the clinical table) |
+| `build_features.py`, `build_methylation_features.py`, `build_immune_features.py`, `extract_desmedt_modules.py` | METABRIC feature construction |
+| `build_tcga_features.py` | TCGA features with the same formulas + harmonized clinical predictors |
+| `make_cohort_tables.py` | cohort flow, Table 2, included vs excluded, TCGA exclusions and sample map |
+| `pca_expression_scores.py` | descriptive PCA and redundancy clusters (Figure 2) |
+| `model_compare_shap.py` | all-patient feature-set comparison (Table 3) and SHAP (Table 5); shared helpers (`clean_cols`, `baselines`, corrected t-test) |
+| `model_er_late.py` | fixed-penalty Cox: all, ER+, five-year landmark (Table 4) |
+| `model_multiomics.py` | methylation / immune paired contrasts (Table 6); `NO_METH=1`, `NO_IMM=1` options |
+| `model_tuned_survival.py` | tuned Cox and RSF, whole pipeline inside inner folds, 50 splits (Tables 7–8); saves out-of-fold predictions |
+| `validate_tcga.py` | exploratory TCGA assessment (Table 9), harmonized internal comparison, saved preprocessing/models; `EXCL_MUTCOUNT=1` sensitivity |
+| `ipcw_sensitivity.py` | Uno's IPCW C-index from saved predictions |
+| `make_figure1.py` | Figure 1 from the result tables |
+| `run_automl_phase2.py`, `run_recurrence_molecular.py`, `run_survival_framing.py` | not used in the manuscript (AutoML, Phase 1 pilot) |
 
-## Next steps
+## Known limitations
 
-1. Deep survival model (e.g. DeepSurv) with careful tuning, compared with the tuned Cox and random survival forest.
-2. Wider penalty grid and elastic-net Cox.
-3. Calibration of the ER+ survival models (calibration curves, integrated Brier score at 5 and 10 years).
-4. Clinical interpretation of the leading molecular features (genomic instability, proliferation, oxidative stress).
-5. Validation in a larger external cohort with longer follow-up (TCGA is directionally supportive but underpowered).
-
-## Key references
-
-Curtis 2012 (Nature); Pereira 2016 (Nat Commun); Rueda 2019 (Nature); Desmedt 2008 (Clin Cancer Res); Liberzon 2015 (Cell Systems); Becht 2016 (Genome Biol); Batra 2021 (Nat Commun); Ali 2016 (PLoS Med); Sestak 2018 (JAMA Oncol); Dowsett 2013 (JCO); Nadeau & Bengio 2003 (Mach Learn); Bouckaert & Frank 2004 (PAKDD).
+Previously cohort-normalized expression input; complete-case cohort (51.6% of patients); adaptive, exploratory model development on one cohort; discrimination only (no calibration or decision analysis; proportional-hazards assumptions not assessed); treatment variables are post-planning information; TCGA endpoint, platform, ER ascertainment and follow-up differ from METABRIC. See the manuscript, Section 4.4.

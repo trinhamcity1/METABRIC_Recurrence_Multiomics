@@ -1,31 +1,29 @@
 """
-Phase 2, Step 3a: fold-safe comparison of feature sets + SHAP stability.
+Feature-set comparison in all patients + SHAP stability (5 folds x 5 repeats, 25 splits).
 
-Question: which genomic features add to the clinical model for recurrence, and
-are they consistently important?
+Steps that learn from data (scaling, PCA, SHAP-based selection) are fitted on the
+training fold only. Note: the expression input is the cBioPortal mRNA z-score file,
+which was normalized by the data provider against a reference population of the
+whole cohort BEFORE this pipeline; that upstream step is not repeated inside folds.
 
-Design (everything that learns from data happens inside the training fold):
-  * Cohort: recorded recurrence outcome + complete clinical (22) + expression,
-    CNA and mutation data.
-  * Repeated stratified CV: 5 folds x 5 repeats (25 train/test splits).
-  * Feature sets:
-      CLIN            22 clinical features (EGETC paper)
-      CLIN+DM         + 7 Desmedt breast-cancer module scores
-      CLIN+HM         + 50 Hallmark scores
-      CLIN+PC         + first 9 PCs of the 57 scores (PCA fit on training fold)
-      CLIN+DRIVERS    + 11 copy-number + 9 mutation features
-      CLIN+ALL        + all 77 genomic features
-      CLIN+SHAPSEL    + top-10 genomic features chosen by SHAP INSIDE the
-                        training fold (honest test of "SHAP-selected" features)
-  * Models: L2 logistic regression and LightGBM (binary recurrence, AUC);
-            penalised Cox (time to recurrence, Harrell C-index).
-  * Statistics: corrected repeated k-fold t-test (Bouckaert & Frank 2004),
-    Holm-adjusted, each set vs CLIN.
-  * SHAP: TreeSHAP of LightGBM on CLIN+ALL in every test fold; we record mean
-    |SHAP| per feature and how often each feature is in the top 15.
+Feature sets (keys used in all result files):
+  BASE           cleaned legacy EGETC baseline (clinical, treatment, mutation count;
+                 constant / duplicated columns removed: 21 columns in all patients)
+  BASE+DM        + 7 Desmedt module scores
+  BASE+HM        + 50 Hallmark scores
+  BASE+PC        + 9 PCs of the 57 scores (PCA fit on the training fold; 9 is fixed)
+  BASE+DRIVERS   + 11 copy-number + 9 mutation features
+  BASE+GEN       + all 77 genomic features (called CLIN+ALL in earlier versions)
+  BASE+SHAPSEL   + top-10 genomic features chosen by SHAP inside the training fold
+Models: ridge Cox (alpha = 10; time to recurrence, Harrell C-index) is the primary
+endpoint analysis. L2 logistic regression and LightGBM classify the recorded
+Recurred / Not Recurred status WITHOUT using follow-up or censoring; their AUCs are
+descriptive classification of observed status, not risk discrimination at a horizon.
+Statistics: corrected repeated k-fold t-test (Bouckaert & Frank 2004), Holm, vs BASE.
+SHAP: TreeSHAP of the binary LightGBM classifier on BASE+GEN in every test fold
+(log-odds scale); describes that classifier in all patients only.
 
-Run in chunks with SPLITS=0-4 etc. if your environment has a time limit; each
-split is checkpointed. SUMMARIZE=1 builds the tables.
+Run in chunks with SPLITS=0-4 etc.; each split is checkpointed. SUMMARIZE=1 builds tables.
 """
 import os, json, warnings, glob, time
 import numpy as np, pandas as pd
@@ -42,10 +40,10 @@ from sksurv.linear_model import CoxPHSurvivalAnalysis
 from sksurv.util import Surv
 from sksurv.metrics import concordance_index_censored
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", category=FutureWarning)
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-OUT = os.path.join(ROOT, "results", "phase2"); CK = os.path.join(OUT, "ck_compare")
+OUT = os.path.join(ROOT, "results", "phase2"); CK = os.path.join(OUT, "ck_compare_v2")
 os.makedirs(CK, exist_ok=True)
 SEED = 42
 N_PCS = 9
@@ -59,6 +57,34 @@ CLIN = ["Age at Diagnosis", "Neoplasm Histologic Grade", "Lymph nodes examined p
         "er_binary", "pr_binary", "her2_pos", "chemo", "hormone_rx", "radio_rx",
         "mastectomy", "postmeno", "ln_pos_flag", "high_grade", "log_mutation",
         "tumor_size_cm", "npi_group", "age_group", "er_x_her2"]
+# CLIN above is the LEGACY baseline of the EGETC paper (22 columns). It is not purely
+# clinical: it contains treatment indicators and two mutation-count summaries.
+LEGACY = CLIN
+MUTCOLS = ["Mutation Count", "log_mutation"]
+CLIN_ONLY = [c for c in LEGACY if c not in MUTCOLS]   # clinical + treatment, no mutation count
+
+
+def clean_cols(df, cols):
+    """Drop columns that are constant in df, or exact duplicates of an earlier column
+    after standardization (e.g. Tumor Size vs tumor_size_cm; in ER+ patients er_binary
+    is constant and er_x_her2 equals her2_pos). Uses predictors only, never the outcome."""
+    keep, seen = [], []
+    for c in cols:
+        x = df[c].astype(float).values
+        sd = x.std()
+        if sd == 0:
+            continue
+        z = (x - x.mean()) / sd
+        if any(np.allclose(z, w) for w in seen):
+            continue
+        keep.append(c); seen.append(z)
+    return keep
+
+
+def baselines(df):
+    """BASE = cleaned legacy baseline (clinical, treatment and mutation count);
+    CLIN = cleaned strictly clinical/treatment comparator (no mutation-count summaries)."""
+    return {"BASE": clean_cols(df, LEGACY), "CLIN": clean_cols(df, CLIN_ONLY)}
 
 
 def load():
@@ -87,9 +113,24 @@ def load():
 
 
 def corrected_repeated_t(diffs, k=5, r=5, test_over_train=0.25):
-    m, s2 = np.mean(diffs), np.var(diffs, ddof=1)
+    """Corrected repeated k-fold t-test (Bouckaert & Frank 2004).
+
+    diffs: paired per-split differences (same split identities for both models).
+    Degenerate cases: all differences zero -> (0, 0, 0, p = 1); a constant
+    non-zero difference has no variance estimate -> (d, d, d, p = nan) and is
+    reported, not tested.
+    """
+    diffs = np.asarray(diffs, dtype=float)
+    if diffs.size != k * r:
+        raise ValueError(f"expected {k * r} paired differences, got {diffs.size}")
+    if not np.all(np.isfinite(diffs)):
+        raise ValueError("non-finite paired differences")
+    m = float(np.mean(diffs))
+    s2 = float(np.var(diffs, ddof=1))
+    if s2 == 0.0:
+        return (0.0, 0.0, 0.0, 1.0) if m == 0.0 else (m, m, m, float("nan"))
     se = np.sqrt((1 / (k * r) + test_over_train) * s2)
-    t = m / se if se > 0 else np.inf
+    t = m / se
     p = 2 * stats.t.sf(abs(t), df=k * r - 1)
     h = stats.t.ppf(0.975, k * r - 1) * se
     return m, m - h, m + h, p
@@ -102,21 +143,27 @@ def holm(p):
     return adj
 
 
+ORDER = ["BASE", "BASE+DM", "BASE+HM", "BASE+PC", "BASE+DRIVERS", "BASE+GEN", "BASE+SHAPSEL"]
+
+
 def build_matrix(co, tr, te, fs, DM, HM, DRV):
-    """Return Xtr, Xte, column names for a feature set; PCA/SHAP selection fit on tr only."""
+    """Return Xtr, Xte, column names for a feature set; PCA/SHAP selection fit on tr only.
+    Feature-set keys: BASE (cleaned legacy baseline), BASE+DM, BASE+HM, BASE+PC,
+    BASE+DRIVERS, BASE+GEN (= all 77 genomic features), BASE+SHAPSEL."""
     G = DM + HM
-    if fs == "CLIN": cols = CLIN
-    elif fs == "CLIN+DM": cols = CLIN + DM
-    elif fs == "CLIN+HM": cols = CLIN + HM
-    elif fs == "CLIN+DRIVERS": cols = CLIN + DRV
-    elif fs == "CLIN+ALL": cols = CLIN + G + DRV
-    elif fs == "CLIN+PC":
+    CLIN = baselines(co)["BASE"]
+    if fs == "BASE": cols = CLIN
+    elif fs == "BASE+DM": cols = CLIN + DM
+    elif fs == "BASE+HM": cols = CLIN + HM
+    elif fs == "BASE+DRIVERS": cols = CLIN + DRV
+    elif fs == "BASE+GEN": cols = CLIN + G + DRV
+    elif fs == "BASE+PC":
         sc = StandardScaler().fit(co.loc[tr, G]); pca = PCA(N_PCS, random_state=SEED).fit(sc.transform(co.loc[tr, G]))
         ptr = pca.transform(sc.transform(co.loc[tr, G])); pte = pca.transform(sc.transform(co.loc[te, G]))
         names = [f"PC{i+1}" for i in range(N_PCS)]
         Xtr = np.hstack([co.loc[tr, CLIN].values, ptr]); Xte = np.hstack([co.loc[te, CLIN].values, pte])
         return Xtr, Xte, CLIN + names
-    elif fs == "CLIN+SHAPSEL":
+    elif fs == "BASE+SHAPSEL":
         allc = CLIN + G + DRV
         m = lgb.LGBMClassifier(**LGB_PARAMS).fit(co.loc[tr, allc], co.loc[tr, "y"])
         sv = shap.TreeExplainer(m).shap_values(co.loc[tr, allc])
@@ -131,9 +178,10 @@ def build_matrix(co, tr, te, fs, DM, HM, DRV):
 def run_split(co, DM, HM, DRV, s, tr, te):
     rec = {"split": s, "res": [], "shap": None, "selected": None}
     ytr, yte = co.loc[tr, "y"].values, co.loc[te, "y"].values
-    for fs in ["CLIN", "CLIN+DM", "CLIN+HM", "CLIN+PC", "CLIN+DRIVERS", "CLIN+ALL", "CLIN+SHAPSEL"]:
+    nb = len(baselines(co)["BASE"])
+    for fs in ORDER:
         Xtr, Xte, cols = build_matrix(co, tr, te, fs, DM, HM, DRV)
-        if fs == "CLIN+SHAPSEL": rec["selected"] = cols[len(CLIN):]
+        if fs == "BASE+SHAPSEL": rec["selected"] = cols[nb:]
         lr = make_pipeline(StandardScaler(), LogisticRegression(C=0.1, max_iter=5000)).fit(Xtr, ytr)
         gb = lgb.LGBMClassifier(**LGB_PARAMS).fit(Xtr, ytr)
         sc = StandardScaler().fit(Xtr)
@@ -145,7 +193,7 @@ def run_split(co, DM, HM, DRV, s, tr, te):
                            "auc_lr": roc_auc_score(yte, lr.predict_proba(Xte)[:, 1]),
                            "auc_lgbm": roc_auc_score(yte, gb.predict_proba(Xte)[:, 1]),
                            "cindex_cox": cidx})
-        if fs == "CLIN+ALL":
+        if fs == "BASE+GEN":
             sv = shap.TreeExplainer(gb).shap_values(Xte)
             sv = sv[1] if isinstance(sv, list) else sv
             rec["shap"] = dict(zip(cols, map(float, np.abs(sv).mean(0))))
@@ -158,11 +206,11 @@ def summarize(co, DM, HM, DRV):
     res.to_csv(os.path.join(OUT, "compare_folds.csv"), index=False)
     summ = res.groupby("feature_set")[["n_features", "auc_lr", "auc_lgbm", "cindex_cox"]].agg(["mean", "std"])
     summ.columns = ["_".join(c) for c in summ.columns]
-    order = ["CLIN", "CLIN+DM", "CLIN+HM", "CLIN+PC", "CLIN+DRIVERS", "CLIN+ALL", "CLIN+SHAPSEL"]
+    order = ORDER
     summ = summ.reindex(order); summ.to_csv(os.path.join(OUT, "compare_summary.csv"))
     tests = []
     for metric in ["auc_lr", "auc_lgbm", "cindex_cox"]:
-        base = res[res.feature_set == "CLIN"].sort_values("split")[metric].values
+        base = res[res.feature_set == "BASE"].sort_values("split")[metric].values
         rows = []
         for fs in order[1:]:
             v = res[res.feature_set == fs].sort_values("split")[metric].values
@@ -177,9 +225,9 @@ def summarize(co, DM, HM, DRV):
     ranks = sh.rank(axis=1, ascending=False)
     shs = pd.DataFrame({"mean_abs_shap": sh.mean(), "sd": sh.std(), "pct_splits_top15": (ranks <= 15).mean() * 100,
                         "median_rank": ranks.median()}).sort_values("mean_abs_shap", ascending=False)
-    shs["type"] = ["clinical" if f in CLIN else "expression" if f.startswith(("HM_", "DM_")) else
+    shs["type"] = ["clinical" if f in LEGACY else "expression" if f.startswith(("HM_", "DM_")) else
                    "copy number" if f.startswith("CNA_") else "mutation" for f in shs.index]
-    shs.to_csv(os.path.join(OUT, "shap_stability_CLIN_ALL.csv"))
+    shs.to_csv(os.path.join(OUT, "shap_stability_BASE_GEN.csv"))
     sel = pd.Series([f for rec in recs for f in rec["selected"]]).value_counts()
     (sel / len(recs) * 100).rename("pct_splits_selected").to_csv(os.path.join(OUT, "shap_selected_frequency.csv"))
     print("cohort n =", len(co), "| events =", int(co.y.sum()), "| splits =", len(recs))

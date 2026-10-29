@@ -66,7 +66,7 @@ CNA_PPM1D_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplificatio
 CNA_ERBB2_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of ERBB2 (value +2)
 CNA_MDM2_amp,cBioPortal CNA (GISTIC),copy number,,,1 if high-level amplification of MDM2 (value +2)
 CNA_TSG_deep_del_any,cBioPortal CNA (GISTIC),copy number,,,"1 if deep deletion (-2) of any of CDKN2A, PTEN, RB1, MAP2K4"
-CNA_fraction_altered,cBioPortal CNA (GISTIC),copy number,,,Fraction of genes with any copy-number change (genome instability)
+CNA_frac_genes_altered,cBioPortal CNA (GISTIC),copy number,,,"Fraction of assayed genes with a non-zero GISTIC call (missing calls excluded); a gene-count proxy for copy-number instability, not length-weighted"
 MUT_PIK3CA,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) PIK3CA mutation
 MUT_TP53,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) TP53 mutation
 MUT_GATA3,cBioPortal mutations (173-gene panel),mutation,,,1 if any protein-changing (non-silent) GATA3 mutation
@@ -96,13 +96,13 @@ METH_BRCA1,METABRIC RRBS promoter methylation,methylation,,,
 METH_RASSF1,METABRIC RRBS promoter methylation,methylation,,,
 METH_CDKN2A,METABRIC RRBS promoter methylation,methylation,,,
 METH_PTEN,METABRIC RRBS promoter methylation,methylation,,,
-IMM_B_lineage,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,Mean expression z-score of 9 B lineage marker genes
-IMM_CD8_T_cells,MCP-counter (Becht 2016),immune/stromal score,1.0,1.0,Mean expression z-score of 1 CD8 T cells marker genes
-IMM_Cytotoxic_lymphocytes,MCP-counter (Becht 2016),immune/stromal score,7.0,6.0,Mean expression z-score of 6 Cytotoxic lymphocytes marker genes
-IMM_Endothelial_cells,MCP-counter (Becht 2016),immune/stromal score,33.0,32.0,Mean expression z-score of 32 Endothelial cells marker genes
-IMM_Fibroblasts,MCP-counter (Becht 2016),immune/stromal score,8.0,8.0,Mean expression z-score of 8 Fibroblasts marker genes
-IMM_Monocytic_lineage,MCP-counter (Becht 2016),immune/stromal score,7.0,7.0,Mean expression z-score of 7 Monocytic lineage marker genes
-IMM_Myeloid_dendritic_cells,MCP-counter (Becht 2016),immune/stromal score,6.0,5.0,Mean expression z-score of 5 Myeloid dendritic cells marker genes
-IMM_NK_cells,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,Mean expression z-score of 9 NK cells marker genes
-IMM_Neutrophils,MCP-counter (Becht 2016),immune/stromal score,15.0,15.0,Mean expression z-score of 15 Neutrophils marker genes
-IMM_T_cells,MCP-counter (Becht 2016),immune/stromal score,16.0,15.0,Mean expression z-score of 15 T cells marker genes
+IMM_B_lineage,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,MCP-counter marker-based z-score summary: mean expression z-score of 9 B lineage marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_CD8_T_cells,MCP-counter (Becht 2016),immune/stromal score,1.0,1.0,MCP-counter marker-based z-score summary: mean expression z-score of 1 CD8 T cells marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Cytotoxic_lymphocytes,MCP-counter (Becht 2016),immune/stromal score,7.0,6.0,MCP-counter marker-based z-score summary: mean expression z-score of 6 Cytotoxic lymphocytes marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Endothelial_cells,MCP-counter (Becht 2016),immune/stromal score,33.0,32.0,MCP-counter marker-based z-score summary: mean expression z-score of 32 Endothelial cells marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Fibroblasts,MCP-counter (Becht 2016),immune/stromal score,8.0,8.0,MCP-counter marker-based z-score summary: mean expression z-score of 8 Fibroblasts marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Monocytic_lineage,MCP-counter (Becht 2016),immune/stromal score,7.0,7.0,MCP-counter marker-based z-score summary: mean expression z-score of 7 Monocytic lineage marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Myeloid_dendritic_cells,MCP-counter (Becht 2016),immune/stromal score,6.0,5.0,MCP-counter marker-based z-score summary: mean expression z-score of 5 Myeloid dendritic cells marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_NK_cells,MCP-counter (Becht 2016),immune/stromal score,9.0,9.0,MCP-counter marker-based z-score summary: mean expression z-score of 9 NK cells marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_Neutrophils,MCP-counter (Becht 2016),immune/stromal score,15.0,15.0,MCP-counter marker-based z-score summary: mean expression z-score of 15 Neutrophils marker genes (not the original MCP-counter abundance estimator; not a cell proportion)
+IMM_T_cells,MCP-counter (Becht 2016),immune/stromal score,16.0,15.0,MCP-counter marker-based z-score summary: mean expression z-score of 15 T cells marker genes (not the original MCP-counter abundance estimator; not a cell proportion)

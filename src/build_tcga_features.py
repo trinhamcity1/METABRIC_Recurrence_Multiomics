@@ -1,7 +1,11 @@
 """
-External validation, Step 1: build the TCGA-BRCA feature table with the SAME
-definitions used for METABRIC, plus harmonized clinical features shared by both
-cohorts.
+Exploratory transport assessment, Step 1: build the TCGA-BRCA feature table with the
+same feature FORMULAS as METABRIC, plus harmonized clinical features shared by both
+cohorts. Measurement differs between cohorts: RNA-seq vs microarray; exome vs a
+173-gene panel (so the non-silent mutation COUNT covers a different gene universe and
+is not tumour mutational burden per megabase); ER inferred from ESR1 expression vs IHC;
+ERBB2 amplification as a proxy for clinical HER2. Variant classifications not in the
+SILENT list are counted as non-silent.
 
 Input : data/brca_tcga_pan_can_atlas_2018/ (cBioPortal "Breast Invasive Carcinoma
         (TCGA, PanCancer Atlas)"), data/gene_sets/
@@ -19,7 +23,14 @@ Both cohorts are therefore described with features they share:
   - HER2: ERBB2 high-level amplification (GISTIC +2) in both cohorts.
 Outcome: TCGA progression-free interval (PFS_STATUS / PFS_MONTHS), the endpoint
 recommended for TCGA by the PanCancer Clinical Data Resource.
-Exclusions (TCGA): male patients, M1 (metastatic at diagnosis), neoadjuvant treatment.
+Exclusions (TCGA): male patients, M1 (metastatic at diagnosis), neoadjuvant = Yes.
+Patients with unknown M stage (MX) or unknown neoadjuvant status are RETAINED and are
+not confirmed M0 / untreated; counts are in results/cohort/tcga_exclusions.csv.
+Samples: barcodes are truncated to the 12-character patient ID. In this release every
+expression, copy-number and mutation sample is a primary tumour (sample type 01) and no
+patient has more than one sample per modality (verified; sample map written by
+make_cohort_tables.py to results/cohort/tcga_sample_map.csv), so the duplicate guard
+never discards a sample.
 """
 import os
 import numpy as np
@@ -94,9 +105,11 @@ def main():
     c = rd("data_cna.txt")
     cs = [x for x in c.columns if x.startswith("TCGA-")]
     c = c.drop_duplicates("Hugo_Symbol").set_index("Hugo_Symbol")[cs]
-    cna = pd.DataFrame({f"CNA_{g}_amp": (c.loc[g] == 2).astype(float) for g in CNA_AMP_GENES})
-    cna["CNA_TSG_deep_del_any"] = (c.loc[CNA_DEL_GENES] == -2).any(axis=0).astype(float)
-    cna["CNA_fraction_altered"] = (c != 0).mean(axis=0)
+    cna = pd.DataFrame({f"CNA_{g}_amp": (c.loc[g] == 2).astype(float).where(c.loc[g].notna()) for g in CNA_AMP_GENES})
+    dd = c.loc[CNA_DEL_GENES]
+    cna["CNA_TSG_deep_del_any"] = (dd == -2).any(axis=0).astype(float).where((dd == -2).any(axis=0) | dd.notna().all(axis=0))  # missing if no deletion seen and a call is missing
+    # fraction of assayed genes with a non-zero GISTIC call (missing calls excluded; no NaN in this release)
+    cna["CNA_frac_genes_altered"] = (c != 0).astype(float).where(c.notna()).mean(axis=0)
     cna.index = [pid(s) for s in cna.index]; cna = cna[~cna.index.duplicated()]
 
     # ---------------- mutations

@@ -14,9 +14,13 @@ Output:
   data/processed/metabric_recurrence_multiomics.csv   one row per patient, joined on Patient ID
   data/processed/feature_dictionary.csv               what every new column means
 
-All gene-set scores are computed per patient from that patient's own values and a
-fixed, published gene list, so no information from other patients (or outcomes)
-is used. That keeps the scores leakage-free before cross-validation.
+Gene-set scores are averages of each patient's expression z-scores over fixed,
+published gene lists; no outcome information is used. The INPUT z-scores, however,
+come from the cBioPortal file data_mrna_illumina_microarray_zscores_ref_diploid_samples.txt
+(release archived in data/brca_metabric/, May 2025 download), which the data provider
+normalized against a reference population drawn from the cohort itself. The features
+therefore use previously cohort-normalized data; that upstream step is not re-estimated
+inside cross-validation folds, so the evaluation is not strictly inductive.
 """
 import os
 import numpy as np
@@ -82,15 +86,18 @@ def cna_features():
     c = c.drop_duplicates("Hugo_Symbol").set_index("Hugo_Symbol")[samples]
     out, meta = {}, []
     for g in CNA_AMP_GENES:
-        out[f"CNA_{g}_amp"] = (c.loc[g] == 2).astype(float)
+        out[f"CNA_{g}_amp"] = (c.loc[g] == 2).astype(float).where(c.loc[g].notna())  # keep missing calls missing
         meta.append({"feature": f"CNA_{g}_amp", "source": "cBioPortal CNA (GISTIC)", "type": "copy number",
                      "description": f"1 if high-level amplification of {g} (value +2)"})
-    out["CNA_TSG_deep_del_any"] = (c.loc[CNA_DEL_GENES] == -2).any(axis=0).astype(float)
+    dd = c.loc[CNA_DEL_GENES]
+    out["CNA_TSG_deep_del_any"] = (dd == -2).any(axis=0).astype(float).where((dd == -2).any(axis=0) | dd.notna().all(axis=0))  # missing if no deletion seen and a call is missing
     meta.append({"feature": "CNA_TSG_deep_del_any", "source": "cBioPortal CNA (GISTIC)", "type": "copy number",
                  "description": "1 if deep deletion (-2) of any of " + ", ".join(CNA_DEL_GENES)})
-    out["CNA_fraction_altered"] = (c != 0).mean(axis=0)
-    meta.append({"feature": "CNA_fraction_altered", "source": "cBioPortal CNA (GISTIC)", "type": "copy number",
-                 "description": "Fraction of genes with any copy-number change (genome instability)"})
+    # fraction of ASSAYED genes with a non-zero GISTIC call; missing calls are excluded from
+    # numerator and denominator (not a segment-length-weighted fraction of the genome)
+    out["CNA_frac_genes_altered"] = (c != 0).astype(float).where(c.notna()).mean(axis=0)
+    meta.append({"feature": "CNA_frac_genes_altered", "source": "cBioPortal CNA (GISTIC)", "type": "copy number",
+                 "description": "Fraction of assayed genes with a non-zero GISTIC call (missing calls excluded); a gene-count proxy for copy-number instability, not length-weighted"})
     df = pd.DataFrame(out); df.index.name = "Patient ID"
     return df, meta
 

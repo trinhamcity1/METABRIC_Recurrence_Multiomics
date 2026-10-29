@@ -1,3 +1,5 @@
+> **Archived working document.** Numbers and wording here reflect earlier analysis rounds and are superseded by the ACET 2026 manuscript and the current files in `results/` (see README and docs/TABLE_FIGURE_MANIFEST.md).
+
 # Phase 1 Pilot Report: Can Molecular Labels Break the Recurrence Ceiling?
 
 Tri Nham · Phase 1 pilot · October 2026

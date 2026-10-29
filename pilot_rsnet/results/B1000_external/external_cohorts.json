@@ -1,0 +1,14 @@
+{
+ "All": {
+  "train_n": 1295,
+  "train_events": 545,
+  "test_n": 918,
+  "test_events": 102
+ },
+ "ER-": {
+  "train_n": 299,
+  "train_events": 137,
+  "test_n": 223,
+  "test_events": 34
+ }
+}

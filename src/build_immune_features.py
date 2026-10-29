@@ -4,7 +4,9 @@ Phase 2, Step 2d: immune / stromal cell-population scores (MCP-counter).
 Source of marker genes: Becht et al. 2016, Genome Biology (MCP-counter),
 file gene_sets/genes.txt from https://github.com/ebecht/MCPcounter (Signatures/).
 Each population score = mean expression z-score of its marker genes in that
-patient (per-patient, outcome-free, no leakage). 10 populations:
+patient (outcome-free; input z-scores are cohort-normalized upstream, see build_features.py).
+These are MCP-counter MARKER-BASED Z-SCORE SUMMARIES, an adaptation of the marker
+signatures, not the original MCP-counter abundance estimator. 10 populations:
 T cells, CD8 T cells, cytotoxic lymphocytes, NK cells, B lineage,
 monocytic lineage, myeloid dendritic cells, neutrophils, endothelial cells, fibroblasts.
 """

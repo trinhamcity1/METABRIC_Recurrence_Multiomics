@@ -1,16 +1,20 @@
 {
   "ER+": {
+    "label": "ESR1-inferred ER-positive",
     "train_n": 996,
     "train_events": 408,
     "test_n": 679,
     "test_events": 66,
-    "test_median_followup_months": 25.28191472
+    "test_median_followup_reverse_km_months": 28.43804452,
+    "test_median_observed_time_months": 25.28191472
   },
   "All": {
+    "label": "all eligible",
     "train_n": 1295,
     "train_events": 545,
     "test_n": 902,
     "test_events": 100,
-    "test_median_followup_months": 25.594240065
+    "test_median_followup_reverse_km_months": 29.85172765,
+    "test_median_observed_time_months": 25.594240065
   }
 }

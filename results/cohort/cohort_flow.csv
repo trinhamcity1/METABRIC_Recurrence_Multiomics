@@ -1,0 +1,9 @@
+step,remaining,excluded_at_step,events_remaining
+All patients in the clinical table,2509,0,1002
+Recorded relapse-free status and time,2380,129,964
+Follow-up time > 0,2376,4,961
+Complete legacy clinical/treatment variables,1295,1081,545
+Expression gene-set scores available,1295,0,545
+Copy-number features available,1295,0,545
+Mutation features available (sequenced),1295,0,545
+Methylation subset (14 features with <=1% missing among profiled),945,350,404

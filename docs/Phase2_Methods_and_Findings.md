@@ -1,3 +1,5 @@
+> **Archived working document.** Numbers and wording here reflect earlier analysis rounds and are superseded by the ACET 2026 manuscript and the current files in `results/` (see README and docs/TABLE_FIGURE_MANIFEST.md).
+
 # METABRIC Recurrence: Clinical and Multi-Omic Prediction — Methods and Findings
 
 Tri Nham · Phase 2 · October 2026

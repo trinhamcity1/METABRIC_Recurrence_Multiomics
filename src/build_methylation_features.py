@@ -4,7 +4,7 @@ Phase 2, Step 2c: DNA methylation features (RRBS promoter methylation, METABRIC)
 Source: brca_metabric/data_methylation_promoters_rrbs.txt
   13,188 gene promoters x 1,418 tumours, beta values 0 (unmethylated) - 1 (methylated).
   No normal-tissue columns are included, so instability is measured WITHIN each
-  tumour (no reference built from other patients -> no leakage).
+  tumour (no reference built from other patients).
 
 Features (one row per patient, joined to the master table on Patient ID):
   METH_mean             mean promoter methylation (global level)
