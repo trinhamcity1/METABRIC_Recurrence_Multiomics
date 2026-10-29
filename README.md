@@ -1,11 +1,6 @@
 # Genomic Features for Recurrence Risk Stratification in METABRIC With an Exploratory TCGA Assessment
 
-<<<<<<< Updated upstream
-Follow-up to *Multi-Target Machine Learning for Breast Cancer Prognosis and Molecular Classification Using METABRIC* (EGETC 2026, Best Paper Award).
-Target venue: ACET Annual Conference 2026, followed by a journal paper.
-=======
 Code, processed data and results for the ACET 2026 manuscript of the same title (Nham, Arteaga-Arteaga, Bravo-Ortiz, Tabares-Soto, Hernandez, Arenas, Guillen-Rondon). Follow-up to *Multi-Target Machine Learning for Breast Cancer Prognosis and Molecular Classification Using METABRIC* (EGETC 2026).
->>>>>>> Stashed changes
 
 **Question.** Do gene-level molecular summaries (expression gene-set scores, copy-number and mutation drivers; methylation and immune marker summaries as secondary blocks) improve recurrence discrimination in METABRIC, and is a similar signal seen in TCGA-BRCA?
 
@@ -13,11 +8,7 @@ Code, processed data and results for the ACET 2026 manuscript of the same title 
 
 All internal comparisons use the same patients and seeded splits. Every step that learns from data inside this pipeline (scaling, PCA, SHAP selection, hyperparameter tuning) is fitted inside training folds, and inside inner folds during tuning. **Exception:** the expression input is the cBioPortal mRNA z-score file, which the data provider normalized against a reference population from the cohort before this pipeline; that step is not re-estimated inside folds, so the evaluation uses previously cohort-normalized data and is not strictly inductive.
 
-<<<<<<< Updated upstream
-## Key findings:
-=======
 Baselines: **BASE** = the EGETC legacy baseline (clinical, treatment and mutation-count variables) with constant / duplicated columns removed (21 columns in all patients, 19 in ER+); **CLIN** = BASE without the two mutation-count summaries (strictly clinical and treatment). **GEN** = all 77 genomic features; **PC+DRV** = 9 principal components of the 57 gene-set scores + 20 drivers.
->>>>>>> Stashed changes
 
 | ER+ patients (n = 996, 408 events), tuned models, 50 splits | Baseline | + genomic | Gain (95% CI) | Holm p |
 |---|---|---|---|---|
